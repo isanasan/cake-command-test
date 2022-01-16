@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,10 +15,15 @@ declare(strict_types=1);
  * @since     3.3.0
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace App;
 
+use App\Command\HalloCommand;
+use App\Command\MorningCommand;
+use App\Command\GreetCommand;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
+use Cake\Console\CommandCollection;
 use Cake\Datasource\FactoryLocator;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
@@ -132,5 +138,17 @@ class Application extends BaseApplication
         $this->addPlugin('Migrations');
 
         // Load more plugins here
+    }
+
+    public function console(CommandCollection $commands): CommandCollection
+    {
+        $commands->addMany($commands->autoDiscover());
+
+        // ネストされた名前のコマンドを追加
+        $commands->add('greet', GreetCommand::class);
+        $commands->add('greet hallo', HalloCommand::class);
+        $commands->add('greet morning', MorningCommand::class);
+
+        return $commands;
     }
 }
